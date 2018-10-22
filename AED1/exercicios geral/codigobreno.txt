@@ -1,0 +1,205 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define REP_FALTA 0
+#define REP_NOTA 1
+#define APROVADO 2
+#define N_ENCONTRADO -1
+
+typedef struct Aluno{
+	char nome[30];
+	int matricula,falta,situacao;
+	float nota[3],media;
+}aluno;
+
+float med(aluno x);
+int stc(aluno x);
+void imp(aluno *x, int n);
+void estatistica(aluno *x, int n);
+void maior_nota(aluno *x, int n_alunos, int n);
+void maior_media(aluno *x, int n);
+void menor_media(aluno *x, int n);
+float media_turma(aluno *x, int n);
+void acima_media(aluno *x, int n);
+void cad_notas(aluno *x);
+int pesquisa(aluno *x, int n, int mat);
+
+int main(){
+	char op;
+	int i,j,mat,aux_mat,encontrado,n;
+	aluno *x;
+	printf("Digite quantos alunos voce deseja cadastrar: ");
+	scanf("%d", &n);
+	x=(aluno *)malloc(n*sizeof(aluno));
+	//nomes
+	for(i=0;i<n;i++){
+		printf("Digite o nome do aluno %d: ", i+1);
+		scanf("%s", &x[i].nome);
+		setbuf(stdin,NULL);
+	}
+	//matriculas
+	for(i=0;i<n;i++){
+		printf("Digite o numero da matricula de %s: ", x[i].nome);
+		scanf("%d", &x[i].matricula);
+		setbuf(stdin,NULL);
+	}
+	//notas
+	for(i=0;i<n;i++){
+		for(j=0;j<3;j++){
+			printf("Digite a %d nota de %s: ", j, x[i].nome);
+			scanf("%f", &x[i].nota[j]);
+			setbuf(stdin,NULL);
+		}
+	}
+	//faltas
+	for(i=0;i<n;i++){
+		printf("Digite o numero de faltas de %s: ", x[i].nome);
+		scanf("%d", &x[i].falta);
+		setbuf(stdin,NULL);
+	}
+	//media
+	for(i=0;i<n;i++){
+		x[i].media=med(x[i]);
+	}
+	//situacao
+	for(i=0;i<n;i++){
+		x[i].situacao=stc(x[i]);
+	}
+	imp(x,n);
+	estatistica(x,n);
+	while(op!='N'){
+		printf("Deseja editar algum aluno? (Y/N)");
+		scanf("%c", &op);
+		setbuf(stdin,NULL);
+		if(op=='Y'){
+			printf("Digite o numero da matricula: ");
+			scanf("%d", &mat);
+			setbuf(stdin,NULL);
+			encontrado=pesquisa(x,n,mat);
+			if(encontrado==N_ENCONTRADO){
+				printf("Aluno nao encontrado!\n");
+			}
+			else{
+				cad_notas(&x[encontrado]);
+				x[encontrado].media=med(x[encontrado]);
+				x[encontrado].situacao=stc(x[encontrado]);
+			}
+		}
+	}
+	imp(x,n);
+	estatistica(x,n);
+	free(x);
+	system("pause");
+	return 0;
+}
+
+float med(aluno x){
+	int i;
+	float soma=0;
+	for(i=0;i<3;i++){
+		soma+=x.nota[i];
+	}
+	return soma/3;
+}
+
+int stc(aluno x){
+	if(x.falta>18) return REP_FALTA;
+	else if(x.media<60) return REP_NOTA;
+	else return APROVADO;
+}
+
+void imp(aluno *x, int n){
+	char sit[3][30]={"Reprovado por falta","Reprovado por nota","Aprovado"};
+	int i,j;
+	for(i=0;i<n;i++){
+		printf("%s\n", x[i].nome);
+		for(j=0;j<3;j++){
+			printf("Nota %d: %.2f\n", j+1, x[i].nota[j]);
+		}
+		printf("Faltas: %d\n", x[i].falta);
+		printf("%s\n\n", sit[x[i].situacao]);
+	}
+}
+
+void estatistica(aluno *x, int n){
+	int i;
+	float maior;
+	for(i=0;i<n;i++){
+		maior_nota(x,n,i);
+	}
+	maior_media(x,n);
+	menor_media(x,n);
+	acima_media(x,n);
+}
+
+void maior_nota(aluno *x, int n_alunos, int n){
+	int i,aux=0;
+	float maior=x[0].nota[n];
+	for(i=0;i<n_alunos;i++){
+		if(x[i].nota[n]>maior){
+			maior=x[i].nota[n];
+			aux=i;
+		}
+	}
+	printf("A maior nota da prova %d e: %.2f de %s\n", n+1, maior, x[aux].nome);
+}
+
+void maior_media(aluno *x, int n){
+	int i,aux=0;
+	float maior=x[0].media;
+	for(i=0;i<3;i++){
+		if(x[i].media>maior){
+			maior=x[i].media;
+			aux=i;
+		}
+	}
+	printf("A maior media e de: %.2f de %s\n", maior, x[aux].nome);
+}
+
+void menor_media(aluno *x, int n){
+	int i,aux=0;
+	float menor=x[0].media;
+	for(i=0;i<3;i++){
+		if(x[i].media<menor){
+			menor=x[i].media;
+			aux=i;
+		}
+	}
+	printf("A menor media e de: %.2f de %s\n", menor, x[aux].nome);
+}
+
+float media_turma(aluno *x, int n){
+	int i;
+	float soma=0;
+	for(i=0;i<3;i++){
+		soma+=x[i].media;
+	}
+	return soma/3;
+}
+
+void acima_media(aluno *x, int n){
+	int i;
+	for(i=0;i<3;i++){
+		if(x[i].media>=media_turma(x,n)){
+			printf("%s esta acima da media da turma!\n", x[i].nome);
+		}
+	}
+}
+
+void cad_notas(aluno *x){
+	int i;
+	for(i=0;i<3;i++){
+		printf("Digite a %d nota: ", i+1);
+		scanf("%f", &x->nota[i]);
+		setbuf(stdin,NULL);
+	}
+}
+
+int pesquisa(aluno *x, int n, int mat){
+	int i;
+	for(i=0;i<n;i++){
+		if(mat==x[i].matricula) return i;
+	}
+	return N_ENCONTRADO;
+}
