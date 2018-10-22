@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1524066706 source:c:\users\eibvi\desktop\lab4 aed\lab4\main.c
+	<stdio.h>
+	<stdlib.h>
+	"lista.h"
+	"lista.c"
+
+1524059468 c:\users\eibvi\desktop\lab4 aed\lab4\lista.h
+
+1524069974 c:\users\eibvi\desktop\lab4 aed\lab4\lista.c
+	"lista.h"
+	<stdio.h>
+	<stdlib.h>
+
