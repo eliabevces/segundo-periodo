@@ -1,0 +1,11 @@
+uberlandia catalao 100
+uberlandia itumbiara 100
+cristalina brasilia 100
+uberlandia araxa 200
+catalao cristalina 200
+itumbiara goiania 200
+goiania brasilia 250
+catalao goiania 260
+araxa belo_horizonte 350
+sao_paulo rio_de_janeiro 400
+belo_horizonte brasilia 700
